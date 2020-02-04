@@ -1,0 +1,69 @@
+<h1 class="page-header">Uredi pitanje</h1>
+
+<!-- Custom Success/Erro Message -->
+<div class="row show-hide-message" *ngIf="message">
+  <div [ngClass]="messageClass">
+    {{ message }}
+  </div>
+</div>
+
+<form (submit)="updateQuestionSubmit()" *ngIf="!loading">
+  <div class="form-group">
+    <label for="title">Naslov</label>
+
+    <input
+      [disabled]="processing"
+      type="text"
+      name="title"
+      placeholder="*Naslov"
+      class="form-control"
+      [(ngModel)]="question.title"
+      #title="ngModel"
+    />
+  </div>
+
+  <div class="form-group">
+    <label for="body">Pitanje</label>
+
+    <textarea
+      [disabled]="processing"
+      name="body"
+      rows="8"
+      cols="80"
+      [(ngModel)]="question.body"
+      #body="ngModel"
+      class="form-control"
+      placeholder="*Pitanje"
+    ></textarea>
+  </div>
+
+  <a [routerLink]="['/delete-question/', question._id]"
+    ><button
+      [disabled]="processing"
+      type="button"
+      name="button"
+      class="btn btn-danger"
+    >
+      Pobriši
+    </button></a
+  >
+  <!-- Go Back Button -->
+  <button
+    [disabled]="processing"
+    type="button"
+    name="button"
+    class="btn btn-success"
+    (click)="goBack()"
+  >
+    Vrati se
+  </button>
+  <!-- Save Changes Button -->
+  <button
+    [disabled]="processing || (!title.dirty && !body.dirty)"
+    type="submit"
+    name="save"
+    class="btn btn-info"
+  >
+    Sačuvaj promjene
+  </button>
+</form>

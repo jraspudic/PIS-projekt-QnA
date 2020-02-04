@@ -1,0 +1,339 @@
+<h1 class="page-header">Pitanja i odgovori</h1>
+
+<div class="row show-hide-message" *ngIf="message && newPost">
+  <div [ngClass]="messageClass">
+    {{ message }}
+  </div>
+</div>
+
+<button
+  type="button"
+  name="button"
+  class="btn btn-warning"
+  *ngIf="!newPost"
+  (click)="newQuestionForm()"
+  [disabled]="!authService.loggedIn()"
+>
+  Novo pitanje
+</button>
+
+<button
+  [disabled]="loadingQuestions"
+  type="button"
+  name="button"
+  class="btn btn-default"
+  *ngIf="!newPost"
+  (click)="reloadQna()"
+>
+  <span class="glyphicon glyphicon-repeat"></span>&nbsp;&nbsp;Osvježi
+</button>
+
+<br />
+<br />
+
+<form
+  [formGroup]="form"
+  name="questionForm"
+  (submit)="onQuestionSubmit()"
+  *ngIf="newPost"
+>
+  <!-- Title Input -->
+  <div class="form-group">
+    <label for="title">Naslov</label>
+    <div
+      [ngClass]="{
+        'has-success': form.controls.title.valid,
+        'has-error': form.controls.title.dirty && form.controls.title.errors
+      }"
+    >
+      <!-- Title Input -->
+      <input
+        type="text"
+        name="title"
+        class="form-control"
+        placeholder="*Naslov"
+        autocomplete="off"
+        formControlName="title"
+      />
+
+      <ul class="help-block">
+        <li
+          *ngIf="
+            form.controls.title.dirty && form.controls.title.errors?.required
+          "
+        >
+          Ovo polje je obavezno
+        </li>
+        <li
+          *ngIf="
+            (form.controls.title.dirty &&
+              form.controls.title.errors?.minlength) ||
+            (form.controls.title.dirty && form.controls.title.errors?.maxlength)
+          "
+        >
+          Maksimalna duljina : 50, minimalna : 5
+        </li>
+        <li
+          *ngIf="
+            form.controls.title.dirty &&
+            form.controls.title.errors?.alphaNumericValidation
+          "
+        >
+          Mora biti slovo ili broj
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="body">Pitanje</label>
+    <div
+      [ngClass]="{
+        'has-success': form.controls.body.valid,
+        'has-error': form.controls.body.dirty && form.controls.body.errors
+      }"
+    >
+      <textarea
+        name="body"
+        rows="8"
+        cols="80"
+        placeholder="*Pitanje"
+        class="form-control"
+        formControlName="body"
+      ></textarea>
+      <!-- Validation -->
+      <ul class="help-block">
+        <li
+          *ngIf="
+            form.controls.body.dirty && form.controls.body.errors?.required
+          "
+        >
+          Ovo polje je obavezno
+        </li>
+        <li
+          *ngIf="
+            (form.controls.body.dirty &&
+              form.controls.body.errors?.minlength) ||
+            (form.controls.body.dirty && form.controls.body.errors?.maxlength)
+          "
+        >
+          Maksimalna duljina : 500, minimalna : 5
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <button
+    [disabled]="processing"
+    type="button"
+    name="button"
+    (click)="goBack()"
+    class="btn btn-warning"
+  >
+    Vrati se
+  </button>
+
+  <button
+    [disabled]="processing || !form.valid"
+    type="submit"
+    name="button"
+    class="btn btn-success"
+  >
+    Submit
+  </button>
+</form>
+
+<div *ngIf="!newPost">
+  <div class="panel panel-primary" *ngFor="let qna of qnaPosts">
+    <div class="panel-heading">
+      <h3 class="panel-title">{{ qna.title }}</h3>
+    </div>
+
+    <div class="panel-body">
+      {{ qna.body }}
+    </div>
+
+    <div class="panel-footer">
+      <strong>Objavio: </strong>{{ qna.createdBy }}
+      <br />
+      <strong>Datum: </strong>{{ qna.createdAt | date: "dd.MM.yyyy  H:mm" }}
+      <br />
+      <div *ngIf="username === qna.createdBy">
+        <strong>Lajkovi: </strong>{{ qna.likes }}
+        <br />
+        <strong>Dislajkovi: </strong>{{ qna.dislikes }}
+      </div>
+
+      <a
+        [routerLink]="['/edit-question/', qna._id]"
+        *ngIf="username === qna.createdBy"
+        ><button type="button" name="button" class="btn btn-sm btn-info">
+          Uredi
+        </button></a
+      >
+
+      <a
+        [routerLink]="['/delete-question/', qna._id]"
+        *ngIf="username === qna.createdBy"
+        ><button type="button" name="button" class="btn btn-sm btn-danger">
+          Pobriši
+        </button></a
+      >
+
+      <div class="dropdown">
+        <button
+          [disabled]="
+            qna.likedBy.indexOf(username) > -1 || !authService.loggedIn()
+          "
+          type="button"
+          name="button"
+          class="btn btn-sm btn-success"
+          *ngIf="username !== qna.createdBy"
+          (click)="likeQuestion(qna._id)"
+        >
+          <span class="glyphicon glyphicon-thumbs-up">&nbsp;</span>Lajk
+          {{ qna.likes }}
+        </button>
+
+        <div class="dropdown-content">
+          <a
+            [routerLink]="['/user/', liker]"
+            *ngFor="let liker of qna.likedBy"
+            >{{ liker }}</a
+          >
+        </div>
+      </div>
+
+      <div class="dropdown">
+        <button
+          [disabled]="
+            qna.dislikedBy.indexOf(username) > -1 || !authService.loggedIn()
+          "
+          type="button"
+          name="button"
+          class="btn btn-sm btn-warning"
+          *ngIf="username !== qna.createdBy"
+          (click)="dislikeQuestion(qna._id)"
+        >
+          <span class="glyphicon glyphicon-thumbs-down">&nbsp;</span>Dislajk:
+          {{ qna.dislikes }}
+        </button>
+
+        <div class="dropdown-content">
+          <a
+            [routerLink]="['/user/', disliker]"
+            *ngFor="let disliker of qna.dislikedBy"
+            >{{ disliker }}</a
+          >
+        </div>
+      </div>
+    </div>
+
+    <ul class="list-group">
+      <li class="list-group-item">
+        <button
+          type="button"
+          name="button"
+          class="btn btn-sm btn-danger"
+          (click)="draftComment(qna._id)"
+          [disabled]="
+            newComment.indexOf(qna._id) > -1 || !authService.loggedIn()
+          "
+        >
+          Komentiraj
+        </button>
+        <br />
+        <br />
+        <div *ngIf="newComment.indexOf(qna._id) > -1">
+          <form [formGroup]="commentForm">
+            <textarea
+              name="comment"
+              rows="10"
+              cols="30"
+              class="form-control"
+              formControlName="comment"
+            ></textarea>
+
+            <div
+              [ngClass]="{
+                'has-success':
+                  !commentForm.controls.comment.errors &&
+                  commentForm.controls.comment.dirty,
+                'has-error':
+                  commentForm.controls.comment.dirty &&
+                  commentForm.controls.comment.errors
+              }"
+            >
+              <ul class="help-block">
+                <li
+                  *ngIf="
+                    commentForm.controls.comment.errors?.required &&
+                    commentForm.controls.comment.dirty
+                  "
+                >
+                  Ovo polje je obavezno
+                </li>
+                <li
+                  *ngIf="
+                    (commentForm.controls.comment.errors?.maxlength &&
+                      commentForm.controls.comment.dirty) ||
+                    (commentForm.controls.comment.errors?.minlength &&
+                      commentForm.controls.comment.dirty)
+                  "
+                >
+                  Komentar mora imati barem 1 karakter, max 200
+                </li>
+              </ul>
+            </div>
+
+            <button
+              [disabled]="!commentForm.valid || processing"
+              type="submit"
+              name="button"
+              class="btn btn-sm btn-info"
+              (click)="postComment(qna._id)"
+            >
+              Objavi
+            </button>
+
+            <button
+              [disabled]="processing"
+              type="button"
+              name="button"
+              class="btn btn-sm btn-danger"
+              (click)="cancelSubmission(qna._id)"
+            >
+              Odustani
+            </button>
+          </form>
+        </div>
+      </li>
+
+      <li
+        *ngIf="
+          enabledComments.indexOf(qna._id) === -1 && qna.comments.length > 0
+        "
+        class="list-group-item"
+      >
+        <span (click)="expand(qna._id)">
+          Prikaži komentare &nbsp;&nbsp;
+          <div class="glyphicon glyphicon-comment"></div>
+        </span>
+      </li>
+
+      <!-- Hide Comments -->
+      <li *ngIf="enabledComments.indexOf(qna._id) > -1" class="list-group-item">
+        <span (click)="collapse(qna._id)">
+          Sakrij komentare&nbsp;&nbsp;
+          <div class="glyphicon glyphicon-comment"></div>
+        </span>
+      </li>
+
+      <div *ngIf="enabledComments.indexOf(qna._id) > -1">
+        <li *ngFor="let comment of qna.comments" class="list-group-item">
+          <strong>{{ comment.commentator }}:</strong> {{ comment.comment }}
+        </li>
+      </div>
+    </ul>
+  </div>
+</div>
