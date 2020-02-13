@@ -25,6 +25,7 @@ export class QnaComponent implements OnInit {
   qnaPosts;
   newComment = [];
   enabledComments = [];
+  searchText: string;
 
   constructor(
     private formBuilder: FormBuilder,

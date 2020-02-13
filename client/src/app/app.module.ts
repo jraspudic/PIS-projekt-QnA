@@ -18,6 +18,7 @@ import { QnaComponent } from "./components/qna/qna.component";
 import { EditQuestionComponent } from "./components/qna/edit-qna/edit-qna.component";
 import { DeleteQuestionComponent } from "./components/qna/delete-qna/delete-qna.component";
 import { PublicProfileComponent } from "./components/public-profile/public-profile.component";
+import { FilterPipe } from "./filter.pipe";
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { PublicProfileComponent } from "./components/public-profile/public-profi
     QnaComponent,
     EditQuestionComponent,
     DeleteQuestionComponent,
-    PublicProfileComponent
+    PublicProfileComponent,
+    FilterPipe
   ],
   imports: [
     BrowserModule,

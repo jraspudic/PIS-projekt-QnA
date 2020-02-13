@@ -144,7 +144,17 @@
 </form>
 
 <div *ngIf="!newPost">
-  <div class="panel panel-primary" *ngFor="let qna of qnaPosts">
+  <br />
+  <input
+    [(ngModel)]="searchText"
+    placeholder="pretraži pitanja"
+    style="height: 40px; width: 300px; font-size: 17px; text-align: center; margin: 0 auto; display: block;"
+  />
+  <br /><br />
+  <div
+    class="panel panel-primary"
+    *ngFor="let qna of qnaPosts | filter: searchText"
+  >
     <div class="panel-heading">
       <h3 class="panel-title">{{ qna.title }}</h3>
     </div>
