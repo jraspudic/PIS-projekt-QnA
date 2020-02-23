@@ -184,7 +184,7 @@
 
       <a
         [routerLink]="['/delete-question/', qna._id]"
-        *ngIf="username === qna.createdBy"
+        *ngIf="username === qna.createdBy || isAdmin"
         ><button type="button" name="button" class="btn btn-sm btn-danger">
           Pobriši
         </button></a

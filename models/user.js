@@ -130,7 +130,8 @@ const userSchema = new Schema({
     lowercase: true,
     validate: usernameValidators
   },
-  password: { type: String, required: true, validate: passwordValidators }
+  password: { type: String, required: true, validate: passwordValidators },
+  isAdmin: { type: Boolean, required: true, default: false }
 });
 
 // Schema Middleware to Encrypt Password

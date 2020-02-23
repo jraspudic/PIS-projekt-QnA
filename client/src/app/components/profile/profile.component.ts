@@ -9,6 +9,7 @@ import { AuthService } from "../../services/auth.service";
 export class ProfileComponent implements OnInit {
   username = "";
   email = "";
+  isAdmin = false;
 
   constructor(private authService: AuthService) {}
 
@@ -16,6 +17,9 @@ export class ProfileComponent implements OnInit {
     this.authService.getProfile().subscribe(profile => {
       this.username = profile.user.username;
       this.email = profile.user.email;
+      this.isAdmin = profile.user.isAdmin;
+      console.log(profile.user);
+      console.log("|^^");
     });
   }
 }

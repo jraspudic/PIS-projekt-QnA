@@ -89,7 +89,7 @@ module.exports = router => {
                     message: "Unable to authenticate user"
                   });
                 } else {
-                  if (user.username !== question.createdBy) {
+                  if (user.username !== question.createdBy && !user.isAdmin) {
                     res.json({
                       success: false,
                       message: "You are not authorized to edit this question."
@@ -184,7 +184,7 @@ module.exports = router => {
                     message: "Unable to authenticate user."
                   });
                 } else {
-                  if (user.username !== question.createdBy) {
+                  if (user.username !== question.createdBy && !user.isAdmin) {
                     res.json({
                       success: false,
                       message: "You are not authorized to delete this Question"

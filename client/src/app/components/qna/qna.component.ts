@@ -26,6 +26,7 @@ export class QnaComponent implements OnInit {
   newComment = [];
   enabledComments = [];
   searchText: string;
+  isAdmin: boolean;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -211,8 +212,10 @@ export class QnaComponent implements OnInit {
     this.authService.getProfile().subscribe(profile => {
       if (profile.user) {
         this.username = profile.user.username;
+        this.isAdmin = profile.user.isAdmin;
       } else {
         this.username = null;
+        this.isAdmin = false;
       }
     });
 

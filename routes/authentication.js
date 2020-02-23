@@ -23,7 +23,8 @@ module.exports = router => {
           let user = new User({
             email: req.body.email.toLowerCase(),
             username: req.body.username.toLowerCase(),
-            password: req.body.password
+            password: req.body.password,
+            isAdmin: false
           });
           // Save user to database
           user.save(err => {
@@ -219,7 +220,7 @@ module.exports = router => {
   router.get("/profile", (req, res) => {
     // Search for user in database
     User.findOne({ _id: req.decoded.userId })
-      .select("username email")
+      .select("username email isAdmin")
       .exec((err, user) => {
         // Check if error connecting
         if (err) {
