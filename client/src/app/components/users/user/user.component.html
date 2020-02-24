@@ -1,0 +1,18 @@
+<ng-container *ngIf="isAdmin">
+  <h1>Lista Korisnika</h1>
+
+  <h3 *ngFor="let user of users">
+    {{ user.username }}
+    <button
+      class="btn btn-danger"
+      (click)="deleteUser(user._id)"
+      *ngIf="user.username != username"
+    >
+      Pobriši
+    </button>
+  </h3>
+</ng-container>
+
+<ng-container *ngIf="!isAdmin">
+  <h1>NISI AUTORIZIRAN DA BUDEŠ OVJDE !!!!!</h1>
+</ng-container>

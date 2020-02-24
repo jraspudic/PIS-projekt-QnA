@@ -88,6 +88,20 @@ export class AuthService {
       .map(res => res.json());
   }
 
+  getUsers() {
+    this.createAuthenticationHeaders();
+    return this.http
+      .get(this.domain + "authentication/users", this.options)
+      .map(res => res.json());
+  }
+
+  deleteUser(id) {
+    this.createAuthenticationHeaders();
+    return this.http
+      .delete(this.domain + "authentication/deleteUser/" + id, this.options)
+      .map(res => res.json());
+  }
+
   // provjera da li je korisnik ulogiran
   loggedIn() {
     return tokenNotExpired();

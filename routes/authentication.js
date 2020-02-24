@@ -235,6 +235,71 @@ module.exports = router => {
         }
       });
   });
+  /* ===============================================================
+     Route to get all users
+  =============================================================== */
+  router.get("/users", (req, res) => {
+    User.find({}, (err, users) => {
+      if (err) {
+        res.json({ success: false, message: err });
+      } else {
+        if (!users) {
+          res.json({ success: false, message: "No users found." });
+        } else {
+          res.json({ success: true, users: users });
+        }
+      }
+    }).sort({ _id: -1 });
+  });
+  /* ===============================================================
+     Route to delete user
+  =============================================================== */
+  router.delete("/deleteUser/:id", (req, res) => {
+    if (!req.params.id) {
+      res.json({ success: false, message: "No id provided" });
+    } else {
+      User.findOne({ _id: req.params.id }, (err, userDelete) => {
+        if (err) {
+          res.json({ success: false, message: "Invalid id" });
+        } else {
+          if (!userDelete) {
+            res.json({ success: false, messasge: "User was not found" });
+          } else {
+            User.findOne({ _id: req.decoded.userId }, (err, user) => {
+              if (err) {
+                res.json({ success: false, message: err });
+              } else {
+                if (!user) {
+                  res.json({
+                    success: false,
+                    message: "Unable to authenticate user."
+                  });
+                } else {
+                  if (!user.isAdmin) {
+                    res.json({
+                      success: false,
+                      message: "You are not authorized to delete this User"
+                    });
+                  } else {
+                    userDelete.remove(err => {
+                      if (err) {
+                        res.json({ success: false, message: err });
+                      } else {
+                        res.json({
+                          success: true,
+                          message: "User deleted!"
+                        });
+                      }
+                    });
+                  }
+                }
+              }
+            });
+          }
+        }
+      });
+    }
+  });
 
   /* ===============================================================
      Route to get user's public profile data

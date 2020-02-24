@@ -9,6 +9,7 @@ import { EditQuestionComponent } from "./components/qna/edit-qna/edit-qna.compon
 import { DeleteQuestionComponent } from "./components/qna/delete-qna/delete-qna.component";
 import { AuthGuard } from "./guards/auth.guard";
 import { NotAuthGuard } from "./guards/notAuth.guard";
+import { UserComponent } from "./components/users/user/user.component";
 
 const appRoutes: Routes = [
   {
@@ -43,6 +44,11 @@ const appRoutes: Routes = [
   {
     path: "user/:username",
     component: PublicProfileComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: "users",
+    component: UserComponent,
     canActivate: [AuthGuard]
   },
   { path: "**", component: QnaComponent }
