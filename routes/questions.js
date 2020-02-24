@@ -61,7 +61,6 @@ module.exports = router => {
         if (!questions) {
           res.json({ success: false, message: "No questions found." });
         } else {
-          console.log(questions);
           res.json({ success: true, questions: questions });
         }
       }
@@ -207,6 +206,77 @@ module.exports = router => {
           }
         }
       });
+    }
+  });
+  router.delete("/deleteComment/:id", (req, res) => {
+    if (!req.params.id) {
+      res.json({ success: false, message: "No id provided" });
+    } else {
+      Question.findOne(
+        { comments: { $elemMatch: { _id: req.params.id } } },
+        (err, comment) => {
+          if (err) {
+            res.json({ success: false, message: "Invalid id" });
+          } else {
+            if (!comment) {
+              res.json({ success: false, messasge: "Comment was not found" });
+            } else {
+              User.findOne({ _id: req.decoded.userId }, (err, user) => {
+                if (err) {
+                  res.json({ success: false, message: err });
+                } else {
+                  if (!user) {
+                    res.json({
+                      success: false,
+                      message: "Unable to authenticate user."
+                    });
+                  } else {
+                    if (0) {
+                      res.json({
+                        success: false,
+                        message: "You are not authorized to delete this Comment"
+                      });
+                    } else {
+                      console.log("duzina je prije " + comment.comments.length);
+                      var index = -1;
+                      var counter = 0;
+                      comment.comments.forEach(comment => {
+                        if (comment._id == req.params.id) {
+                          index = counter;
+                        }
+                        counter++;
+                      });
+                      console.log(index);
+                      if (index > -1) {
+                        comment.comments.splice(index, 1);
+                      }
+                      console.log("duzina je sad " + comment.comments.length);
+                      comment.save(err => {
+                        if (err) {
+                          if (err.errors) {
+                            res.json({
+                              success: false,
+                              message:
+                                "Please ensure form is filled out properly"
+                            });
+                          } else {
+                            res.json({ success: false, message: err });
+                          }
+                        } else {
+                          res.json({
+                            success: true,
+                            message: "Question Updated!"
+                          });
+                        }
+                      });
+                    }
+                  }
+                }
+              });
+            }
+          }
+        }
+      );
     }
   });
 

@@ -342,6 +342,13 @@
       <div *ngIf="enabledComments.indexOf(qna._id) > -1">
         <li *ngFor="let comment of qna.comments" class="list-group-item">
           <strong>{{ comment.commentator }}:</strong> {{ comment.comment }}
+          <a
+            (click)="deleteComment(comment._id)"
+            *ngIf="username === comment.commentator || isAdmin"
+            ><button type="button" name="button" class="btn btn-sm btn-danger">
+              Pobriši
+            </button></a
+          >
         </li>
       </div>
     </ul>

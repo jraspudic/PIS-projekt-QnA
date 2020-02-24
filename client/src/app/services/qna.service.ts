@@ -80,4 +80,11 @@ export class QnaService {
       .post(this.domain + "questions/comment", qnaData, this.options)
       .map(res => res.json());
   }
+
+  deleteComment(id) {
+    this.createAuthenticationHeaders();
+    return this.http
+      .delete(this.domain + "questions/deleteComment/" + id, this.options)
+      .map(res => res.json());
+  }
 }

@@ -165,7 +165,6 @@ export class QnaComponent implements OnInit {
 
   getAllQuestions() {
     this.qnaService.getAllQuestions().subscribe(data => {
-      console.log(data);
       this.qnaPosts = data.questions;
     });
   }
@@ -206,6 +205,14 @@ export class QnaComponent implements OnInit {
   collapse(id) {
     const index = this.enabledComments.indexOf(id);
     this.enabledComments.splice(index, 1);
+  }
+
+  deleteComment(id) {
+    this.qnaService.deleteComment(id).subscribe(data => {
+      console.log("odgobor od servera");
+      console.log(data);
+      this.reloadQna();
+    });
   }
 
   ngOnInit() {

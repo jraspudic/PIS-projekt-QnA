@@ -115,6 +115,7 @@ const passwordValidators = [
 ];
 
 // User Model Definition
+
 const userSchema = new Schema({
   email: {
     type: String,
